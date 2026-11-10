@@ -38,7 +38,7 @@ jobs:
             -C "$GITHUB_WORKSPACE/toolchain"
           test -x toolchain/bin/aarch64-linux-android-gcc
           echo "$GITHUB_WORKSPACE/toolchain/bin" >> "$GITHUB_PATH"
-          aarch64-linux-android-gcc --version
+          "$GITHUB_WORKSPACE/toolchain/bin/aarch64-linux-android-gcc" --version
 
       - name: Configure A20
         run: |

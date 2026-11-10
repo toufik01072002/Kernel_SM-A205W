@@ -58,6 +58,7 @@ jobs:
       - name: Build Image and DTBs
         run: |
           make -j"$(nproc)" O=out \
+            HOSTCFLAGS=-fcommon \
             ARCH=arm64 \
             CROSS_COMPILE=aarch64-linux-android- \
             Image dtbs

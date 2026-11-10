@@ -1007,3 +1007,10 @@ int pmd_free_pte_page(pmd_t *pmd, unsigned long addr)
 	return pmd_none(*pmd);
 }
 #endif
+
+
+/* Install the Samsung ARM64 identity map before kexec. */
+void setup_mm_for_reboot(void)
+{
+	cpu_install_idmap();
+}

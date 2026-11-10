@@ -791,6 +791,11 @@ config SECCOMP
 	  and the task is only allowed to execute a few safe syscalls
 	  defined by each seccomp mode.
 
+config KEXEC
+	bool "kexec system call"
+	depends on PM_SLEEP_SMP
+	select KEXEC_CORE
+
 config XEN_DOM0
 	def_bool y
 	depends on XEN

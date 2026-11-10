@@ -66,4 +66,5 @@ extern void (*arm_pm_restart)(enum reboot_mode reboot_mode, const char *cmd);
 
 #endif	/* __ASSEMBLY__ */
 
+
 #endif	/* __ASM_SYSTEM_MISC_H */

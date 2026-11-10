@@ -87,4 +87,6 @@ extern void create_pgd_mapping(struct mm_struct *mm, phys_addr_t phys,
 extern void *fixmap_remap_fdt(phys_addr_t dt_phys);
 
 #endif	/* !__ASSEMBLY__ */
+void setup_mm_for_reboot(void);
+
 #endif

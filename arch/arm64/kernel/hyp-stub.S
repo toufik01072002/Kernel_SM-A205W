@@ -55,15 +55,28 @@ ENDPROC(__hyp_stub_vectors)
 	.align 11
 
 el1_sync:
-	mrs	x1, esr_el2
-	lsr	x1, x1, #26
-	cmp	x1, #0x16
-	b.ne	2f				// Not an HVC trap
-	cbz	x0, 1f
-	msr	vbar_el2, x0			// Set vbar_el2
-	b	2f
-1:	mrs	x0, vbar_el2			// Return vbar_el2
-2:	eret
+        mrs     x17, esr_el2
+        lsr     x17, x17, #26
+        cmp     x17, #0x16
+        b.ne    2f
+        mrs     x17, esr_el2
+        and     x17, x17, #0xffff
+        cmp     x17, #HVC_CALL_FUNC
+        b.eq    3f
+        /* Preserve Samsung HVC #0 VBAR interface. */
+        cbz     x0, 1f
+        msr     vbar_el2, x0
+        b       2f
+1:      mrs     x0, vbar_el2
+        b       2f
+3:      mov     x18, lr
+        mov     lr, x0
+        mov     x0, x1
+        mov     x1, x2
+        mov     x2, x3
+        blr     lr
+        mov     lr, x18
+2:      eret
 ENDPROC(el1_sync)
 
 .macro invalid_vector	label

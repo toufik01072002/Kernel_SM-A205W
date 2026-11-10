@@ -17,6 +17,7 @@
 
 #ifndef __ASM__VIRT_H
 #define __ASM__VIRT_H
+#define HVC_CALL_FUNC 3
 
 #define BOOT_CPU_MODE_EL1	(0xe11)
 #define BOOT_CPU_MODE_EL2	(0xe12)

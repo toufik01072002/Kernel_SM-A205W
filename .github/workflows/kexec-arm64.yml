@@ -1,0 +1,91 @@
+name: Build A20 ARM64 KEXEC
+
+on:
+  push:
+    branches:
+      - kexec-arm64-4.4-d-work
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+    runs-on: ubuntu-22.04
+    timeout-minutes: 120
+
+    steps:
+      - name: Checkout kernel
+        uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+
+      - name: Install dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y \
+            bc bison flex build-essential \
+            libssl-dev libelf-dev device-tree-compiler \
+            wget xz-utils
+
+      - name: Install Android GCC 4.9
+        run: |
+          mkdir -p "$GITHUB_WORKSPACE/toolchain"
+          wget -q \
+            "https://android.googlesource.com/platform/prebuilts/gcc/linux-x86/aarch64/aarch64-linux-android-4.9/+archive/423c0265176bcabd1c885f8cf6f0cedf67d3f59b.tar.gz" \
+            -O /tmp/gcc49.tar.gz
+          tar -xzf /tmp/gcc49.tar.gz \
+            -C "$GITHUB_WORKSPACE/toolchain"
+          test -x toolchain/bin/aarch64-linux-android-gcc
+          echo "$GITHUB_WORKSPACE/toolchain/bin" >> "$GITHUB_PATH"
+          aarch64-linux-android-gcc --version
+
+      - name: Configure A20
+        run: |
+          export ARCH=arm64
+          export CROSS_COMPILE=aarch64-linux-android-
+
+          make O=out ARCH=arm64 CROSS_COMPILE="$CROSS_COMPILE" \
+            exynos7885-a20_defconfig
+
+          make O=out ARCH=arm64 CROSS_COMPILE="$CROSS_COMPILE" \
+            olddefconfig
+
+          grep -qx 'CONFIG_KEXEC=y' out/.config
+
+      - name: Build Image and DTBs
+        run: |
+          make -j"$(nproc)" O=out \
+            ARCH=arm64 \
+            CROSS_COMPILE=aarch64-linux-android- \
+            Image dtbs
+
+      - name: Verify and package
+        run: |
+          test -s out/arch/arm64/boot/Image
+          test -s out/vmlinux
+          test -s out/System.map
+
+          mkdir -p artifacts
+          cp out/arch/arm64/boot/Image artifacts/
+          cp out/vmlinux artifacts/
+          cp out/System.map artifacts/
+          cp out/.config artifacts/kernel.config
+
+          mkdir -p artifacts/dtb
+          find out/arch/arm64/boot/dts \
+            -type f -name '*.dtb' \
+            -exec cp --parents {} artifacts/dtb/ \;
+
+          sha256sum artifacts/Image artifacts/vmlinux \
+            > artifacts/SHA256SUMS
+
+          tar -czf kernel-a20-kexec.tar.gz -C artifacts .
+
+      - name: Upload artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: A20-KEXEC-${{ github.sha }}
+          path: kernel-a20-kexec.tar.gz
+          if-no-files-found: error
+          retention-days: 14

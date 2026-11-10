@@ -44,6 +44,7 @@ jobs:
         run: |
           export ARCH=arm64
           export CROSS_COMPILE=aarch64-linux-android-
+            export ANDROID_MAJOR_VERSION=p
 
           make O=out ARCH=arm64 CROSS_COMPILE="$CROSS_COMPILE" \
             exynos7885-a20_defconfig

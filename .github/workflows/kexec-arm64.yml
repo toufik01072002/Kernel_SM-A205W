@@ -55,6 +55,12 @@ jobs:
 
           grep -qx 'CONFIG_KEXEC=y' out/.config
 
+      - name: Prepare UH ELF for out-of-tree build
+        run: |
+          mkdir -p out/init
+          cp init/uh.elf out/init/uh.elf
+          test -s out/init/uh.elf
+
       - name: Build Image and DTBs
         run: |
           make -j"$(nproc)" O=out \

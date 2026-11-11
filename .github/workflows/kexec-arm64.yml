@@ -55,11 +55,13 @@ jobs:
 
           grep -qx 'CONFIG_KEXEC=y' out/.config
 
-      - name: Prepare UH ELF for out-of-tree build
+      - name: Prepare embedded binaries for out-of-tree build
         run: |
-          mkdir -p out/init
+          mkdir -p out/init out/firmware
           cp init/uh.elf out/init/uh.elf
+          cp firmware/exynos7885_acpm_fvp.fw out/firmware/exynos7885_acpm_fvp.fw
           test -s out/init/uh.elf
+          test -s out/firmware/exynos7885_acpm_fvp.fw
 
       - name: Build Image and DTBs
         run: |

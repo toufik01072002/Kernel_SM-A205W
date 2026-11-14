@@ -71,6 +71,33 @@ jobs:
             CROSS_COMPILE=aarch64-linux-android- \
             Image dtbs
 
+      - name: Verify EDK2 FD reservation in every A20 recovery overlay
+        run: |
+          set -euo pipefail
+
+          DTBO_DIR="out/arch/arm64/boot/dts/exynos/dtbo"
+          OVERLAYS=(
+            exynos7884B-a20_cis_ser_00.dtbo
+            exynos7884B-a20_cis_ser_01.dtbo
+            exynos7884B-a20_can_single_03.dtbo
+            exynos7884B-a20_can_single_05.dtbo
+          )
+
+          for overlay in "${OVERLAYS[@]}"; do
+            blob="$DTBO_DIR/$overlay"
+            decoded="$RUNNER_TEMP/$overlay.dts"
+
+            test -s "$blob"
+            dtc -I dtb -O dts -o "$decoded" "$blob"
+
+            grep -q 'edk2_fd_rmem@90000000' "$decoded"
+            grep -q '0x90000000' "$decoded"
+            grep -q '0x200000' "$decoded"
+            grep -q 'no-map' "$decoded"
+
+            echo "PASS: $overlay reserves 0x90000000-0x90200000"
+          done
+
       - name: Verify and package
         run: |
           test -s out/arch/arm64/boot/Image

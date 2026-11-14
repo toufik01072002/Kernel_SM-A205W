@@ -117,10 +117,25 @@ jobs:
 
           test -n "$(find artifacts/dtb -type f -name '*.dtb' -print -quit)"
 
+          mkdir -p artifacts/dtbo
+          find out/arch/arm64/boot/dts \
+            -type f -name '*.dtbo' \
+            -exec cp --parents {} artifacts/dtbo/ \\;
+
+          DTBO_ARTIFACT_DIR="artifacts/dtbo/out/arch/arm64/boot/dts/exynos/dtbo"
+          for overlay in \
+            exynos7884B-a20_cis_ser_00.dtbo \
+            exynos7884B-a20_cis_ser_01.dtbo \
+            exynos7884B-a20_can_single_03.dtbo \
+            exynos7884B-a20_can_single_05.dtbo; do
+            test -s "$DTBO_ARTIFACT_DIR/$overlay"
+          done
+
           (
             cd artifacts
             sha256sum Image vmlinux System.map kernel.config \
-              $(find dtb -type f -name '*.dtb' | sort) > SHA256SUMS
+              $(find dtb -type f -name '*.dtb' | sort) \
+              $(find dtbo -type f -name '*.dtbo' | sort) > SHA256SUMS
             sha256sum -c SHA256SUMS
           )
 

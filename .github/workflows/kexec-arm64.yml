@@ -120,7 +120,7 @@ jobs:
           mkdir -p artifacts/dtbo
           find out/arch/arm64/boot/dts \
             -type f -name '*.dtbo' \
-            -exec cp --parents {} artifacts/dtbo/ \\;
+            -exec cp --parents {} artifacts/dtbo/ \;
 
           DTBO_ARTIFACT_DIR="artifacts/dtbo/out/arch/arm64/boot/dts/exynos/dtbo"
           for overlay in \

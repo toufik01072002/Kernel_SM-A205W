@@ -88,8 +88,14 @@ jobs:
             -type f -name '*.dtb' \
             -exec cp --parents {} artifacts/dtb/ \;
 
-          sha256sum artifacts/Image artifacts/vmlinux \
-            > artifacts/SHA256SUMS
+          test -n "$(find artifacts/dtb -type f -name '*.dtb' -print -quit)"
+
+          (
+            cd artifacts
+            sha256sum Image vmlinux System.map kernel.config \
+              $(find dtb -type f -name '*.dtb' | sort) > SHA256SUMS
+            sha256sum -c SHA256SUMS
+          )
 
           tar -czf kernel-a20-kexec.tar.gz -C artifacts .
 

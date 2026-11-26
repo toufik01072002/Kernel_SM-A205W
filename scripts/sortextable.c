@@ -21,6 +21,14 @@
 #include <sys/stat.h>
 #include <getopt.h>
 #include <elf.h>
+#undef ELF32_ST_BIND
+#undef ELF32_ST_TYPE
+#undef ELF64_ST_BIND
+#undef ELF64_ST_TYPE
+#define ELF32_ST_BIND(val) (((unsigned char) (val)) >> 4)
+#define ELF32_ST_TYPE(val) ((val) & 0xf)
+#define ELF64_ST_BIND(val) ELF32_ST_BIND(val)
+#define ELF64_ST_TYPE(val) ELF32_ST_TYPE(val)
 #include <fcntl.h>
 #include <setjmp.h>
 #include <stdio.h>

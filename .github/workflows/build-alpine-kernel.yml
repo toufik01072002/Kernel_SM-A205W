@@ -1,0 +1,46 @@
+name: Build SM-A205W Alpine Kernel (Wi-Fi + BT)
+
+on:
+  push:
+    branches:
+      - kexec-arm64-4.4-d-work
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-22.04
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Install build dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y bc bison build-essential ccache curl flex git libssl-dev libncurses5-dev lzop python2 python3 wget xz-utils zip
+
+      - name: Download Android GCC 4.9 aarch64 toolchain
+        run: |
+          mkdir -p toolchain/gcc/linux-x86/aarch64/aarch64-linux-android-4.9
+          git clone --depth=1 https://googlesource.com -b android-11.0.0_r48 toolchain/gcc/linux-x86/aarch64/aarch64-linux-android-4.9
+
+      - name: Configure and Build Kernel
+        run: |
+          export PLATFORM_VERSION=11
+          export ANDROID_MAJOR_VERSION=r
+          export ARCH=arm64
+          export CROSS_COMPILE=$(pwd)/toolchain/gcc/linux-x86/aarch64/aarch64-linux-android-4.9/bin/aarch64-linux-android-
+
+          mkdir -p out
+          cp arch/arm64/configs/alpine_a20_wifi_bt_defconfig out/.config
+          make O=out ARCH=arm64 olddefconfig
+          make O=out ARCH=arm64 -j$(nproc)
+
+      - name: Upload compiled Kernel Image & DTB
+        uses: actions/upload-artifact@v4
+        with:
+          name: SM-A205W-Alpine-Kernel-WiFi-BT
+          path: |
+            out/arch/arm64/boot/Image*
+            out/arch/arm64/boot/dts/exynos/*.dtb
+            out/.config

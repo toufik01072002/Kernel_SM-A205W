@@ -24,23 +24,27 @@ jobs:
           mkdir -p toolchain/gcc/linux-x86/aarch64/aarch64-linux-android-4.9
           git clone --depth=1 https://googlesource.com -b android-11.0.0_r48 toolchain/gcc/linux-x86/aarch64/aarch64-linux-android-4.9
 
-      - name: Configure and Build Kernel
+      - name: Configure and Build Kernel Image
         run: |
           export PLATFORM_VERSION=11
           export ANDROID_MAJOR_VERSION=r
           export ARCH=arm64
           export CROSS_COMPILE=$(pwd)/toolchain/gcc/linux-x86/aarch64/aarch64-linux-android-4.9/bin/aarch64-linux-android-
 
-          mkdir -p out
+          mkdir -p out/arch/arm64/boot
           cp arch/arm64/configs/alpine_a20_wifi_bt_defconfig out/.config
           make O=out ARCH=arm64 olddefconfig
-          make O=out ARCH=arm64 Image Image.gz -j$(nproc)
+          make O=out ARCH=arm64 vmlinux -j$(nproc)
 
-      - name: Upload compiled Kernel Image & DTB
+          ${CROSS_COMPILE}objcopy -O binary -R .note -R .note.gnu.build-id -R .comment -S out/vmlinux out/arch/arm64/boot/Image
+          gzip -9 -c out/arch/arm64/boot/Image > out/arch/arm64/boot/Image.gz
+          ls -lh out/arch/arm64/boot/Image*
+
+      - name: Upload compiled Kernel Image
         uses: actions/upload-artifact@v4
         with:
           name: SM-A205W-Alpine-Kernel-WiFi-BT
           path: |
-            out/arch/arm64/boot/Image*
-            out/arch/arm64/boot/dts/exynos/*.dtb
+            out/arch/arm64/boot/Image
+            out/arch/arm64/boot/Image.gz
             out/.config

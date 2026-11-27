@@ -973,6 +973,7 @@ static int parse_options(struct super_block *sb, char *options)
 	if (F2FS_OPTION(sbi).active_logs != NR_CURSEG_TYPE)
 		F2FS_OPTION(sbi).whint_mode = WHINT_MODE_OFF;
 
+	#ifdef CONFIG_SEC_DEBUG
 	if (F2FS_OPTION(sbi).fsync_mode == FSYNC_MODE_NOBARRIER) {
 		char volume_name[MAX_VOLUME_NAME];
 
@@ -983,6 +984,7 @@ static int parse_options(struct super_block *sb, char *options)
 			keypress_callback_fn = f2fs_keypress_callback_fn;
 		}
 	}
+	#endif /* CONFIG_SEC_DEBUG */
 
 	return 0;
 }

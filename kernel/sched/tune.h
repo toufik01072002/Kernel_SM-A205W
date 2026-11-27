@@ -1,4 +1,8 @@
 
+/* Forward declarations keep disabled freqvar stubs warning-free. */
+struct cpufreq_policy;
+struct freqvar_boost_data;
+
 #ifdef CONFIG_SCHED_TUNE
 
 #ifdef CONFIG_FREQVAR_SCHEDTUNE

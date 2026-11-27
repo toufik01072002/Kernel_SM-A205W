@@ -375,6 +375,8 @@ static int unregister_gadget(struct gadget_info *gi)
 	return 0;
 }
 
+#ifdef CONFIG_USB_CONFIGFS_UEVENT
+
 static void clear_current_usb_link(struct usb_composite_dev *cdev)
 {
 	struct usb_configuration *c;
@@ -395,6 +397,8 @@ static void clear_current_usb_link(struct usb_composite_dev *cdev)
 		}
 	}
 }
+
+#endif /* CONFIG_USB_CONFIGFS_UEVENT */
 
 static ssize_t gadget_dev_desc_UDC_store(struct config_item *item,
 		const char *page, size_t len)

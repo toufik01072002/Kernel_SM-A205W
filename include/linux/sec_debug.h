@@ -43,8 +43,8 @@ extern void sec_getlog_supply_kernel(void *klog_buf);
 extern void sec_getlog_supply_platform(unsigned char *buffer, const char *name);
 extern void sec_gaf_supply_rqinfo(unsigned short curr_offset, unsigned short rq_offset);
 #else
-#define int id_get_asb_ver(void)			(-1)
-#define int id_get_product_line(void)			(-1)
+#define id_get_asb_ver()\t\t\t(-1)
+#define id_get_product_line()\t\t\t(-1)
 #define sec_debug_setup()			(-1)
 #define sec_debug_recovery_reboot()		do { } while (0)
 #define sec_debug_reboot_handler()		do { } while (0)

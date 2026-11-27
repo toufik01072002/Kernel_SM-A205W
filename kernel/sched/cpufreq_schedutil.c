@@ -544,7 +544,9 @@ static int sugov_exit(struct cpufreq_policy *policy)
 	count = gov_attr_set_put(&tunables->attr_set, &sg_policy->tunables_hook);
 	policy->governor_data = NULL;
 	if (!count) {
+#ifdef CONFIG_FREQVAR_SCHEDTUNE
 		schedtune_freqvar_boost_exit(policy, &tunables->freqvar_boost);
+#endif
 		sugov_tunables_free(tunables);
 	}
 

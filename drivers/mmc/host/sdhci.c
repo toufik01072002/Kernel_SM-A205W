@@ -2980,7 +2980,7 @@ static void sdhci_cmdq_set_block_size(struct mmc_host *mmc)
 {
 	struct sdhci_host *host = mmc_priv(mmc);
 
-	sdhci_set_blk_size_reg(host, 512, 0);
+	sdhci_writew(host, SDHCI_MAKE_BLKSZ(0, 512), SDHCI_BLOCK_SIZE);
 }
 
 static void sdhci_cmdq_clear_set_dumpregs(struct mmc_host *mmc, bool set)
@@ -2990,15 +2990,10 @@ static void sdhci_cmdq_clear_set_dumpregs(struct mmc_host *mmc, bool set)
 	if (host->ops->clear_set_dumpregs)
 		host->ops->clear_set_dumpregs(host, set);
 }
-static int sdhci_cmdq_crypto_cfg(struct mmc_host *mmc,
-		struct mmc_request *mrq, u32 slot)
+static void sdhci_cmdq_enhanced_strobe_mask(struct mmc_host *mmc,
+						 bool set)
 {
-	struct sdhci_host *host = mmc_priv(mmc);
-
-	if (!host->is_crypto_en)
-		return 0;
-
-	return sdhci_crypto_cfg(host, mrq, slot);
+	/* This SDHCI implementation has no vendor enhanced-strobe mask hook. */
 }
 #else
 static void sdhci_cmdq_clear_set_irqs(struct mmc_host *mmc, bool clear)
@@ -3031,10 +3026,10 @@ static void sdhci_cmdq_clear_set_dumpregs(struct mmc_host *mmc, bool set)
 {
 
 }
-static int sdhci_cmdq_crypto_cfg(struct mmc_host *mmc,
-		struct mmc_request *mrq, u32 slot)
+static void sdhci_cmdq_enhanced_strobe_mask(struct mmc_host *mmc,
+						 bool set)
 {
-	return 0;
+	/* This SDHCI implementation has no vendor enhanced-strobe mask hook. */
 }
 #endif
 
@@ -3044,7 +3039,7 @@ static const struct cmdq_host_ops sdhci_cmdq_ops = {
 	.dump_vendor_regs = sdhci_cmdq_dump_vendor_regs,
 	.set_block_size = sdhci_cmdq_set_block_size,
 	.clear_set_dumpregs = sdhci_cmdq_clear_set_dumpregs,
-	.crypto_cfg	= sdhci_cmdq_crypto_cfg,
+	.enhanced_strobe_mask = sdhci_cmdq_enhanced_strobe_mask,
 };
 
 int sdhci_add_host(struct sdhci_host *host)

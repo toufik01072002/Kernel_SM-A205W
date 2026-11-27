@@ -38,11 +38,12 @@
 #endif
 
 extern int ignore_fs_panic;
-extern int hard_reset_key_pressed;
 extern void (*ufs_debug_func)(void *);
-
+#ifdef CONFIG_SEC_DEBUG
+extern int hard_reset_key_pressed;
 extern struct super_block *keypress_callback_sb;
 extern int (*keypress_callback_fn)(struct super_block *sb);
+#endif
 #define f2fs_bug_on(sbi, condition)	  __f2fs_bug_on(sbi, condition, true)
 #define f2fs_bug_on_endio(sbi, condition) __f2fs_bug_on(sbi, condition, false)	
 #define __f2fs_bug_on(sbi, condition, set_extra_blk)				\

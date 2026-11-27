@@ -28,7 +28,7 @@ jobs:
 
           mkdir -p out/arch/arm64/boot
           cp arch/arm64/configs/alpine_a20_wifi_bt_defconfig out/.config
-          ./scripts/config --file out/.config --enable CONFIG_CGROUPS --enable CONFIG_CGROUP_SCHED --enable CONFIG_FAIR_GROUP_SCHED --enable CONFIG_RT_GROUP_SCHED --enable CONFIG_SCHED_TUNE
+          bash ./scripts/config --file out/.config --enable CONFIG_CGROUPS --enable CONFIG_CGROUP_SCHED --enable CONFIG_FAIR_GROUP_SCHED --enable CONFIG_RT_GROUP_SCHED --enable CONFIG_SCHED_TUNE
           make O=out ARCH=arm64 olddefconfig
           make O=out ARCH=arm64 KCFLAGS="-Wno-error" vmlinux -j$(nproc)
 

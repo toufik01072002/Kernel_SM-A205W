@@ -34,7 +34,7 @@ jobs:
           mkdir -p out
           cp arch/arm64/configs/alpine_a20_wifi_bt_defconfig out/.config
           make O=out ARCH=arm64 olddefconfig
-          make O=out ARCH=arm64 -j$(nproc)
+          make O=out ARCH=arm64 Image Image.gz -j$(nproc)
 
       - name: Upload compiled Kernel Image & DTB
         uses: actions/upload-artifact@v4

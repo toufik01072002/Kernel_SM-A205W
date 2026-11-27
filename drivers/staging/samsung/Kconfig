@@ -99,6 +99,7 @@ config SEC_DEBUG_AVOID_UNNECESSARY_TRAP
 
 config SEC_DEBUG_FILE_LEAK
 	bool "Panic when file leak detected"
+	depends on SEC_DEBUG
 	depends on !SAMSUNG_PRODUCT_SHIP
 	default y
 

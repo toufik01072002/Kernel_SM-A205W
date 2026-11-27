@@ -22,7 +22,7 @@ jobs:
       - name: Download Android GCC 4.9 aarch64 toolchain
         run: |
           mkdir -p toolchain/gcc/linux-x86/aarch64/aarch64-linux-android-4.9
-          git clone --depth=1 https://googlesource.com -b android-11.0.0_r48 toolchain/gcc/linux-x86/aarch64/aarch64-linux-android-4.9
+          git clone --depth=1 https://android.googlesource.com/platform/prebuilts/gcc/linux-x86/aarch64/aarch64-linux-android-4.9 -b android-11.0.0_r48 toolchain/gcc/linux-x86/aarch64/aarch64-linux-android-4.9
 
       - name: Configure and Build Kernel Image
         run: |

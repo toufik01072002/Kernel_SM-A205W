@@ -1040,7 +1040,7 @@ CONFIG_BLK_DEV=y
 # CONFIG_CXL_BASE is not set
 # CONFIG_CXL_KERNEL_API is not set
 # CONFIG_CXL_EEH is not set
-# CONFIG_MCU_IPC is not set
+CONFIG_MCU_IPC=y
 # CONFIG_SHM_IPC is not set
 # CONFIG_USIM_DETECT is not set
 # CONFIG_SEC_SIPC_MODEM_IF is not set

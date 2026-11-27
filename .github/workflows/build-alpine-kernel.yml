@@ -1,4 +1,5 @@
 name: Build SM-A205W Alpine Kernel (Wi-Fi + BT)
+# Trigger build after sec_ext.h compatibility fix
 
 on:
   push:

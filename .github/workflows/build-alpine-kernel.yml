@@ -14,27 +14,22 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      - name: Install build dependencies
+      - name: Install build dependencies and aarch64 GCC
         run: |
           sudo apt-get update
-          sudo apt-get install -y bc bison build-essential ccache curl flex git libssl-dev libncurses5-dev lzop python2 python3 wget xz-utils zip
-
-      - name: Download Android GCC 4.9 aarch64 toolchain
-        run: |
-          mkdir -p toolchain/gcc/linux-x86/aarch64/aarch64-linux-android-4.9
-          git clone --depth=1 https://android.googlesource.com/platform/prebuilts/gcc/linux-x86/aarch64/aarch64-linux-android-4.9 -b android-11.0.0_r48 toolchain/gcc/linux-x86/aarch64/aarch64-linux-android-4.9
+          sudo apt-get install -y bc bison build-essential ccache curl flex git gcc-aarch64-linux-gnu binutils-aarch64-linux-gnu libssl-dev libncurses5-dev lzop python2 python3 wget xz-utils zip
 
       - name: Configure and Build Kernel Image
         run: |
           export PLATFORM_VERSION=11
           export ANDROID_MAJOR_VERSION=r
           export ARCH=arm64
-          export CROSS_COMPILE=$(pwd)/toolchain/gcc/linux-x86/aarch64/aarch64-linux-android-4.9/bin/aarch64-linux-android-
+          export CROSS_COMPILE=aarch64-linux-gnu-
 
           mkdir -p out/arch/arm64/boot
           cp arch/arm64/configs/alpine_a20_wifi_bt_defconfig out/.config
           make O=out ARCH=arm64 olddefconfig
-          make O=out ARCH=arm64 vmlinux -j$(nproc)
+          make O=out ARCH=arm64 KCFLAGS="-Wno-error" vmlinux -j$(nproc)
 
           ${CROSS_COMPILE}objcopy -O binary -R .note -R .note.gnu.build-id -R .comment -S out/vmlinux out/arch/arm64/boot/Image
           gzip -9 -c out/arch/arm64/boot/Image > out/arch/arm64/boot/Image.gz

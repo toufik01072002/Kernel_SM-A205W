@@ -12,6 +12,7 @@
  */
 
 #include <linux/kernel.h>
+#include <linux/ktime.h>
 #include <linux/module.h>
 #include <linux/sec_debug.h>
 #include <linux/soc/samsung/exynos-soc.h>
@@ -298,7 +299,7 @@ void sec_debug_set_extra_info_ktime(void)
 {
 	u64 ts_nsec;
 
-	ts_nsec = local_clock();
+	ts_nsec = ktime_get_ns();
 	do_div(ts_nsec, 1000000000);
 	sec_debug_set_extra_info(INFO_KTIME, "%lu", (unsigned long)ts_nsec);
 }
